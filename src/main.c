@@ -4,194 +4,133 @@
 #include "../include/espalhamento.h"
 #include "../include/arquivo.h"
 
+int menu()
+{
+  int op;
+  printf("\n================================\n");
+  printf("1- Carregar arquivo\n");
+  printf("2- Criar tabela hash\n");
+  printf("3- Inserir na tabela hash\n");
+  printf("4- Buscar na tabela hash\n");
+  printf("5- Remover da tabela hash\n");
+  printf("6- Mostrar ocupação\n");
+  printf("7- Excluir tabela hash\n");
+  printf("8- Salvar e Sair");
+  printf("\n================================\n");
+
+  printf("\n\nDigite uma opcao: ");
+  scanf("%d",&op);
+  return op;
+}
+
 int main()
 {
   unsigned long h;
-  HASH tabela;
+  HASH* tabela;
   REGISTRO p, q;
   FILE* fp;
+  int op;
 
-  if (!criar_tabela_hash(&tabela))
+  op = menu();
+
+  while(op >= 1 && op <= 8)
   {
-    printf("Erro na criacao da tabela\n");
-    exit(1);
-  }
+      switch(op)
+      {
+        case 1 : 
+        carrega_do_arquivo(&tabela, fp);
+        if(tabela == NULL)
+        {
+          return 0;
+        }
+        printf("\nTabela carregada com sucesso!\n");
+        break;
+    
+        case 2 :
+        if (!criar_tabela_hash(tabela))
+        {
+          printf("Erro na criacao da tabela\n");
+          exit(1);
+        }
+        else
+        {
+          printf("\nTabela criada com sucesso!\n");
+        }
+        break;
 
-  ocupacao_da_tabela_hash(&tabela);
+        case 3 :
+        getchar();
+        printf("Digite o nome do artigo: ");
+        fgets(p.nome, sizeof(p.nome), stdin);
+        printf("Digite o autor: ");
+        fgets(p.autor, sizeof(p.autor), stdin);
+        printf("Digite o ano de publicacao: ");
+        scanf("%d",& p.ano);
 
-  // Inserir primeira chave
-  strcpy(p.nome, "Fundamentos da Programacao de Computadores");
-  strcpy(p.autor, "Ana Fernanda Gomes Ascencio, Edilene Aparecida Veneruchi de Campos");
-  p.ano = 2012;
+        if (!inserir_na_tabela_hash(tabela, &p))
+        {
+          printf("Falha na insercao\n");
+          exit(1);
+        }
+        else
+        {
+          printf("Inserido\n");
+        }
+        break;
 
-  h = inserir_na_tabela_hash(&tabela, &p);
+        case 4 :
+        getchar();
+        printf("Digite o nome do artigo a ser buscado: ");
+        fgets(q.nome, sizeof(q.nome), stdin);
+        if (!busca_na_tabela_hash(tabela, &q))
+        {
+          printf("Erro na recuperacao\n");
+        }
+        else
+        {
+          printf("O(A) Autor(a) de %s eh %s\n", q.nome, q.autor);
+        }
+        break;
 
-  if (h == -1)
-  {
-    printf("Falha na insercao\n");
-    exit(1);
-  }
-  else
-  {
-    insere_no_arquivo(fp, &p, h);
-    printf("Inserido\n");
-  }
+        case 5 :
+        getchar();
+        printf("Digite o nome do artigo a ser removido: ");
+        fgets(q.nome, sizeof(q.nome), stdin);
+        if (apagar_da_tabela_hash(tabela, &q))
+        {
+          printf("%s removido\n", q.nome);
+        }
+        else
+        {
+          printf("%s nao existe na tabela\n", q.nome);
+        }
+        break;
 
-  // Inserir segunda chave
-  strcpy(p.nome, "Engenharia de Software");
-  strcpy(p.autor, "Ian Sommerville");
-  p.ano = 2011;
+        case 6:
+        ocupacao_da_tabela_hash(tabela);
+        break;
 
-  h = inserir_na_tabela_hash(&tabela, &p);
+        case 7:
+        if (destruir_tabela_hash(tabela))
+        {
+          printf("Tabela destruida\n");
+        }
+        else
+        {
+          printf("Problema para destruir a tabela\n");
+        }
+        break;
 
-  if (h == -1)
-  {
-    printf("Falha na insercao\n");
-    exit(1);
-  }
-  else
-  {
-    insere_no_arquivo(fp,&p,h);
-    printf("Inserido\n");
-  }
- 
+        case 8:
+        printf("\nSalvando e Saindo...\n");
+        insere_no_arquivo(tabela, fp);
+        exit(0);
+        break;
 
-  // Inserir primeira chave
-  strcpy(p.nome, "Java: Como Programar");
-  strcpy(p.autor, "Paul Deitel e Harvey Deitel");
-  p.ano =  2010;
-
-  h = inserir_na_tabela_hash(&tabela, &p);
-
-  if (h == -1)
-  {
-    printf("Falha na insercao\n");
-    exit(1);
-  }
-  else
-  {
-    insere_no_arquivo(fp,&p,h);
-    printf("Inserido\n");
-  }
-
-  h = inserir_na_tabela_hash(&tabela, &p);
-
-  // Inserir chave duplicada para produzir colisao
-  if (h == -1)
-  {
-    printf("Falha na insercao\n");
-    exit(1);
-  }
-  else
-  {
-    insere_no_arquivo(fp,&p,h);
-    printf("Inserido\n");
-  }
-
-  ocupacao_da_tabela_hash(&tabela);
-
-
-  // ***
-
-  // Recuperando uma chave que existe
-  strcpy(q.nome, "Fundamentos da Programacao de Computadores");
-  if (!busca_na_tabela_hash(&tabela, &q))
-  {
-    printf("Erro na recuperacao\n");
-  }
-  else
-  {
-    printf("O(A) autor(a) de %s eh %s\n", q.nome, q.autor);
-  }
-
-  // Recuperando uma chave que existe
-  strcpy(q.nome, "Engenharia de Software");
-  if (!busca_na_tabela_hash(&tabela, &q))
-  {
-    printf("Erro na recuperacao\n");
-  }
-  else
-  {
-    printf("O(A) autor(a) de %s eh %s\n", q.nome, q.autor);
-  }
-
-  // Recuperando uma chave que nao existe
-  strcpy(q.nome, "Graphs: An Introductory Approach");
-  if (!busca_na_tabela_hash(&tabela, &q))
-  {
-    printf("Erro na recuperacao\n");
-  }
-  else
-  {
-    printf("O(A) autor(a) de %s eh %s\n", q.nome, q.autor);
-  }
-
-  // ***
-
-  // Removendo uma chave que existe
-  strcpy(q.nome, "Java: Como Programar");
-  if (apagar_da_tabela_hash(&tabela, &q))
-  {
-    printf("%s removido\n", q.nome);
-  }
-  else
-  {
-    printf("%s nao existe na tabela\n", q.nome);
-  }
-
-// Removendo uma chave que existe
-  strcpy(q.nome, "Engenharia de Software");
-  if (apagar_da_tabela_hash(&tabela, &q))
-  {
-    printf("%s removido\n", q.nome);
-  }
-  else
-  {
-    printf("%s nao existe na tabela\n", q.nome);
-  }
-
-  // ***
-
-  // Recuperando uma chave que existe
-  strcpy(q.nome, "Fundamentos da Programacao de Computadores");
-  if (!busca_na_tabela_hash(&tabela, &q))
-  {
-    printf("Erro na recuperacao\n");
-  }
-  else
-  {
-    printf("O(A) autor(a) de %s eh %s\n", q.nome, q.autor);
-  }
-
-  // Removendo uma chave que nao existe
-  strcpy(q.nome, "Estrutura de Dados e Algoritmos em C++");
-  if (apagar_da_tabela_hash(&tabela, &q))
-  {
-    printf("%s removido\n", q.nome);
-  }
-  else
-  {
-    printf("%s nao existe na tabela\n", q.nome);
-  }
-
-  // mostrando a tabela
-  ocupacao_da_tabela_hash(&tabela);
-
-  // Ampliando
-  printf("Expandindo a tabela...\n");
-  expandir_tabela_hash(&tabela);
-
-  // mostrando a tabela
-  ocupacao_da_tabela_hash(&tabela);
-
-  if (destruir_tabela_hash(&tabela))
-  {
-    printf("Tabela destruida\n");
-  }
-  else
-  {
-    printf("Problema para destruir a tabela\n");
-  }
-
+        default:
+        printf("Selecione uma opcao valida!");
+      }
+      op = menu();
+    }
   return 0;
 }

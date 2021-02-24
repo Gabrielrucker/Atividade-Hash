@@ -53,7 +53,7 @@ unsigned long calcular_valor_do_hash(char *chave, unsigned long M)
   return h;
 }
 
-unsigned long inserir_na_tabela_hash(HASH *tabela, REGISTRO *registro)
+bool inserir_na_tabela_hash(HASH *tabela, REGISTRO *registro)
 {
   unsigned long h;
 
@@ -63,7 +63,7 @@ unsigned long inserir_na_tabela_hash(HASH *tabela, REGISTRO *registro)
     // Se nao conseguir expandir e nao tiver mais espaco, aborta.
     if (!expandir_tabela_hash(tabela) && (tabela->ocupados == tabela->tamanho))
     {
-      return -1;
+      return false;
     }
   }
 
@@ -76,7 +76,7 @@ unsigned long inserir_na_tabela_hash(HASH *tabela, REGISTRO *registro)
   memcpy(&tabela->chaves[h], registro, sizeof(REGISTRO));
   tabela->estados[h] = OCUPADO;
   tabela->ocupados++;
-  return h;
+  return true;
 }
 
 bool busca_na_tabela_hash(HASH *tabela, REGISTRO *registro)

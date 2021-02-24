@@ -31,7 +31,7 @@ typedef struct hash
 
 bool criar_tabela_hash(HASH *tabela);
 bool destruir_tabela_hash(HASH *tabela);
-unsigned long inserir_na_tabela_hash(HASH *tabela, REGISTRO *registro);
+bool inserir_na_tabela_hash(HASH *tabela, REGISTRO *registro);
 bool apagar_da_tabela_hash(HASH *tabela, REGISTRO *registro);
 bool busca_na_tabela_hash(HASH *tabela, REGISTRO *registro);
 
