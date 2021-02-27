@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+// Carrega os registros da tabela hash no arquivo
 void carrega_do_arquivo(HASH** t, FILE* fp) {
 
     if(fp = fopen("dados.bin", "rb"))
@@ -69,7 +70,7 @@ void carrega_do_arquivo(HASH** t, FILE* fp) {
     }                  
 }
 
-
+// Insere os registros da tabela hash no arquivo
 void insere_no_arquivo(HASH* t, FILE* fp) {
 
     fp = fopen("dados.bin", "wb"); //abre para escrita
